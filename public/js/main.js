@@ -6,9 +6,19 @@ import * as ui from "./ui.js";
 import * as recordingUtils from "./recordingUtils.js";
 import * as strangerUtils from "./strangerUtils.js";
 
+const getTurnServerCredentials= async() =>{
+  const responseData= await axios.get('/api/get-turn-credentials');
+  console.log(responseData.data.token.iceServers);
+  webRTCHandler.setTURNServers(responseData.data.token.iceServers);
+}
+
 // initialization of socketIO connection
 const socket = io("/");
 wss.registerSocketEvents(socket);
+
+getTurnServerCredentials().then(() => {
+  webRTCHandler.getLocalPreview();
+});
 
 webRTCHandler.getLocalPreview();
 
