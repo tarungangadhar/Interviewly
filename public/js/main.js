@@ -6,6 +6,12 @@ import * as ui from "./ui.js";
 import * as recordingUtils from "./recordingUtils.js";
 import * as strangerUtils from "./strangerUtils.js";
 
+
+import { showVideoContainer, initializeMobileView } from "./ui.js";
+
+// Initialization of the mobile view
+document.addEventListener("DOMContentLoaded", initializeMobileView);
+
 const getTurnServerCredentials= async() =>{
   const responseData= await axios.get('/api/get-turn-credentials');
   console.log(responseData.data.token.iceServers);
@@ -57,6 +63,8 @@ personalCodeVideoButton.addEventListener("click", () => {
   const callType = constants.callType.VIDEO_PERSONAL_CODE;
 
   webRTCHandler.sendPreOffer(callType, calleePersonalCode);
+  showVideoContainer(); // Ensure this is called after the pre-offer
+
 });
 
 const strangerChatButton = document.getElementById("stranger_chat_button");
@@ -69,6 +77,8 @@ strangerVideoButton.addEventListener("click", () => {
   strangerUtils.getStrangerSocketIdAndConnect(
     constants.callType.VIDEO_STRANGER
   );
+  showVideoContainer(); // Ensure this is called after the pre-offer
+
 });
 
 // register event for allow connections from strangers

@@ -99,7 +99,7 @@ export const showInfoDialog = (preOfferAnswer) => {
   if (preOfferAnswer === constants.preOfferAnswer.CALL_UNAVAILABLE) {
     infoDialog = elements.getInfoDialog(
       "Call is not possible",
-      "Probably callee is busy. Please try againg later"
+      "Probably callee is busy. Please try again later"
     );
   }
 
@@ -300,5 +300,137 @@ const hideElement = (element) => {
 const showElement = (element) => {
   if (element.classList.contains("display_none")) {
     element.classList.remove("display_none");
+  }
+};
+
+// Mobile view functions
+
+export const initializeMobileView = () => {
+  if (window.innerWidth <= 768) {
+    const dashboardContainer = document.querySelector('.dashboard_container');
+    const callContainer = document.querySelector('.call_container');
+    const messengerContainer = document.querySelector('.messenger_container');
+    
+    // Ensure dashboard is shown initially
+    dashboardContainer.style.display = 'block';
+
+    // Hide call and messenger containers initially
+    callContainer.classList.remove('active');
+    messengerContainer.classList.remove('active');
+
+    // Remove any existing small icons or check icons
+    const smallIcon = document.querySelector('.small-icon');
+    if (smallIcon) smallIcon.remove();
+
+    const checkIcon = document.querySelector('.check-icon');
+    if (checkIcon) checkIcon.remove();
+  }
+};
+
+export const showVideoContainer = () => {
+  if (window.innerWidth <= 768) {
+    const callContainer = document.querySelector('.call_container');
+    const dashboardContainer = document.querySelector('.dashboard_container');
+    
+    // Show video container and hide dashboard
+    callContainer.classList.add('active');
+    dashboardContainer.style.display = 'none';
+
+    // Add small chat icon
+    if (!document.querySelector('.small-icon')) {
+      const smallIcon = document.createElement('div');
+      smallIcon.classList.add('small-icon');
+
+      const chatIcon = document.createElement('img');
+      chatIcon.src = './utils/images/chat.png'; // Ensure you have a chat icon in this path
+      smallIcon.appendChild(chatIcon);
+
+      document.body.appendChild(smallIcon);
+      smallIcon.addEventListener('click', showChatContainer);
+    }
+  }
+};
+
+export const showChatContainer = () => {
+  if (window.innerWidth <= 768) {
+    const callContainer = document.querySelector('.call_container');
+    const messengerContainer = document.querySelector('.messenger_container');
+    
+    // Show messenger and hide video container
+    callContainer.classList.remove('active');
+    messengerContainer.classList.add('active');
+
+    // Add check icon to switch back to video
+    if (!document.querySelector('.check-icon')) {
+      const checkIcon = document.createElement('div');
+      checkIcon.classList.add('check-icon');
+
+      const checkImg = document.createElement('img');
+      checkImg.src = './utils/images/closeIcon.jpg'; // Ensure you have a check icon in this path
+      checkIcon.appendChild(checkImg);
+
+      document.body.appendChild(checkIcon);
+      checkIcon.addEventListener('click', () => {
+        messengerContainer.classList.remove('active');
+        callContainer.classList.add('active');
+        checkIcon.remove();
+        showSmallChatIcon();
+      });
+    }
+    
+    // Remove small chat icon when messenger is shown
+    const smallIcon = document.querySelector('.small-icon');
+    if (smallIcon) smallIcon.remove();
+  }
+};
+
+export const showSmallChatIcon = () => {
+  if (window.innerWidth <= 768) {
+    if (!document.querySelector('.small-icon')) {
+      const smallIcon = document.createElement('div');
+      smallIcon.classList.add('small-icon');
+
+      const chatIcon = new Image(); // Use the Image object to preload the image
+      chatIcon.src = './utils/images/chatSymbol.jpg'; // Ensure you have a chat icon in this path
+
+      // Wait for the image to load before appending it
+      chatIcon.onload = function() {
+        smallIcon.appendChild(chatIcon);
+        document.body.appendChild(smallIcon); // Append the icon after it is fully loaded
+      };
+
+      // If image fails to load, show "CHAT" text
+      chatIcon.onerror = function() {
+        const chatText = document.createElement('span');
+        chatText.innerText = 'CHAT';
+        chatText.style.color = 'black';
+        chatText.style.fontSize = '16px';
+        smallIcon.appendChild(chatText);
+        document.body.appendChild(smallIcon); // Append the fallback text after handling the error
+      };
+
+      // Add the event listener for clicking the icon
+      smallIcon.addEventListener('click', showChatContainer);
+    }
+  }
+};
+// Function to reset the UI to the initial view after hang-up
+export const resetToInitialView = () => {
+  if (window.innerWidth <= 768) {
+    const dashboardContainer = document.querySelector('.dashboard_container');
+    const callContainer = document.querySelector('.call_container');
+    const messengerContainer = document.querySelector('.messenger_container');
+
+    // Reset the view to show the dashboard container
+    dashboardContainer.style.display = 'block';
+    callContainer.classList.remove('active');
+    messengerContainer.classList.remove('active');
+
+    // Remove any icons that may still be present
+    const smallIcon = document.querySelector('.small-icon');
+    if (smallIcon) smallIcon.remove();
+
+    const checkIcon = document.querySelector('.check-icon');
+    if (checkIcon) checkIcon.remove();
   }
 };
